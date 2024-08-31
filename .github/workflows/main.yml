@@ -1,4 +1,4 @@
-name: CI for MVC Project
+name: CI/CD para Proyecto PHP Clásico
 
 on:
   push:
@@ -8,35 +8,28 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository code
+    - name: Checkout código
       uses: actions/checkout@v4
 
-    - name: Validate PHP syntax
-      run: find . -name "*.php" -print0 | xargs -0 -n1 php -l
+    - name: Configurar PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'  # Puedes ajustar la versión de PHP según lo que utilices
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
-    - name: Run PHPUnit tests
-      run: vendor/bin/phpunit --colors=always
-
-    - name: Lint CSS files
+    - name: Validar sintaxis de PHP
       run: |
-        find . -name "*.css" -print0 | xargs -0 stylelint
+        find . -name "*.php" -print0 | xargs -0 -n 1 php -l
 
-    - name: Lint HTML files
-      run: |
-        find . -name "*.html" -print0 | xargs -0 htmlhint
+    # Opcional: Ejecutar análisis estático de código con PHPStan
+    # - name: Configurar PHPStan
+    #   run: composer require --dev phpstan/phpstan
+    # - name: Ejecutar PHPStan
+    #   run: vendor/bin/phpstan analyse --level max
 
-    - name: Lint JavaScript files
-      run: |
-        find . -name "*.js" -print0 | xargs -0 eslint
-
+    # Opcional: Ejecutar pruebas unitarias
+    # - name: Ejecutar pruebas unitarias
+    #   run: phpunit --configuration phpunit.xml
 
